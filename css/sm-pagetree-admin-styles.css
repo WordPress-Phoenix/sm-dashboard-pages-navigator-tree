@@ -14,3 +14,4 @@
 #smPagetree .draft { background: #F60; }
 #smPagetree .revision { background: #C00;}
 #smPagetree .excluded { background: #000;}
+#smPagetree .private { background: #333;}

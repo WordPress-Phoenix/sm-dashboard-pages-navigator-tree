@@ -4,7 +4,7 @@ Plugin Name: SM Sitemap Navigator
 Plugin URI: http://sethmatics.com/extend/
 Description: Lists all pages in site in admin
 Author: Jeremy Smeltzer and Seth Carstens
-Version: 1.0.1
+Version: 1.0.2
 Author URI: http://sethmatics.com/
 */
 
