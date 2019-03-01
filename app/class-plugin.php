@@ -37,6 +37,23 @@ class Plugin extends Abstract_Plugin {
 	 */
 	protected static $current_file = __FILE__;
 
+	/**
+	 * Activated the plugin actions
+	 *
+	 * @return void
+	 */
+	public static function activate() {
+		Fe_Sitemap::sm_create_gsitemap();
+	}
+
+	/**
+	 * De-Activated the plugin actions
+	 *
+	 * @return void
+	 */
+	public static function deactivate() {
+		Fe_Sitemap::sm_remove_gsitemap();
+	}
 
 	/**
 	 * Initialize the plugin - for public (front end)
@@ -80,25 +97,6 @@ class Plugin extends Abstract_Plugin {
 	 * @return mixed|void
 	 */
 	protected function defines_and_globals() {
-	}
-
-	/**
-	 * Activated the plugin actions
-	 *
-	 * @return void
-	 */
-	public static function activate() {
-	 Fe_Sitemap::sm_create_gsitemap();
-	}
-
-
-	/**
-	 * De-Activated the plugin actions
-	 *
-	 * @return void
-	 */
-	public static function deactivate() {
-		Fe_Sitemap::sm_remove_gsitemap();
 	}
 
 } // END class Plugin

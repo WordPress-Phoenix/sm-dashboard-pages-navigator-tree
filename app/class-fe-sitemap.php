@@ -61,14 +61,14 @@ class Fe_Sitemap {
 		<div style="margin-bottom:10px;">
 			<input type="checkbox" name="sm_sitemap_exclude" id="sm_sitemap_exclude"
 				   value="yes" <?php if ( get_post_meta( $post->ID, '_sm_sitemap_exclude', true ) == 'yes' ) {
-				echo 'checked="checked"';
-			} ?> >
+						echo 'checked="checked"';
+} ?> >
 			<label for="sm_sitemap_exclude">Display page name in sitemap without link</label>
 		</div>
 		<input type="checkbox" name="sm_sitemap_exclude_completely" id="sm_sitemap_exclude_completely"
 			   value="yes" <?php if ( get_post_meta( $post->ID, '_sm_sitemap_exclude_completely', true ) == 'yes' ) {
-			echo 'checked="checked"';
-		} ?> >
+					echo 'checked="checked"';
+} ?> >
 		<label for="sm_sitemap_exclude">Exclude this page from sitemap</label>
 		<?php
 		// Use nonce for verification
@@ -121,24 +121,23 @@ class Fe_Sitemap {
 					if ( get_post_meta( $page->ID, '_wp_page_template', true ) == 'tpl-404.php' || get_post_meta( $page->ID, '_sm_sitemap_exclude', true ) == 'yes' ) {
 						$output .= "<h$hlvl >" . $page->post_title . "</h$hlvl> " . PHP_EOL;
 						if ( current_user_can( 'edit_posts' ) ) {
-							$output .= "<a class=\"editPage\" href=\"" . get_edit_post_link( $page->ID ) . "\">[edit page]</a>" . PHP_EOL;
+							$output .= '<a class="editPage" href="' . get_edit_post_link( $page->ID ) . '">[edit page]</a>' . PHP_EOL;
 						}
 					} else {
-						$output .= "<h$hlvl ><a href=\"" . get_permalink( $page->ID ) . "\">" . $page->post_title . "</a></h$hlvl> " . PHP_EOL;
+						$output .= "<h$hlvl ><a href=\"" . get_permalink( $page->ID ) . '">' . $page->post_title . "</a></h$hlvl> " . PHP_EOL;
 						if ( current_user_can( 'edit_posts' ) ) {
-							$output .= "<a class=\"editPage\" href=\"" . get_edit_post_link( $page->ID ) . "\">[edit page]</a>" . PHP_EOL;
+							$output .= '<a class="editPage" href="' . get_edit_post_link( $page->ID ) . '">[edit page]</a>' . PHP_EOL;
 						}
 					}
 
-					$output .= "</div>" . PHP_EOL;
+					$output .= '</div>' . PHP_EOL;
 					// recall function to see if child pages have children
 					$output .= sm_pages_recursive( $page->ID, $lvl );
 
-					$output .= "</li>" . PHP_EOL;
-				} //end if sitemap exclude completely
-
+					$output .= '</li>' . PHP_EOL;
+				}
 			}
-			$output .= "</ul>" . PHP_EOL;
+			$output .= '</ul>' . PHP_EOL;
 		}
 
 		return $output;
@@ -159,15 +158,13 @@ class Fe_Sitemap {
 		$args     = [ 'post_parent' => $parentId, 'post_type' => 'post', 'numberposts' => - 1 ];
 		$thePosts = get_posts( $args );
 
-		//die( (string)count($thePosts) );
-
+		// die( (string)count($thePosts) );
 		$pages = array_merge( $thePages, $thePosts );
 
 		if ( $pages ) {
 
 			// loop through pages and add them to list
 			foreach ( $pages as $page ) {
-
 
 				// if exclude box checked or page uses 404template just publish page title without link, otherwise create link to page
 				if ( get_post_meta( $page->ID, '_wp_page_template', true ) == 'tpl-404.php' || get_post_meta( $page->ID, '_sm_sitemap_exclude', true ) == 'yes' || get_post_meta( $page->ID, '_sm_sitemap_exclude_completely', true ) == 'yes' ) {
@@ -181,7 +178,6 @@ class Fe_Sitemap {
 				// recall function to see if child pages have children
 				$output .= sm_google_sitemap_recursive( $page->ID, $lvl );
 			}
-
 		}//if($pages)
 		return $output;
 	}
@@ -194,7 +190,7 @@ class Fe_Sitemap {
 		echo $ouput;
 	}
 
-// dispalys google sitemap when gsitemap page is called
+	// dispalys google sitemap when gsitemap page is called
 	public static function sm_google_sitemap() {
 		if ( is_page( 'gsitemap' ) ) {
 			header( 'Content-type: text/xml' );
@@ -207,10 +203,10 @@ class Fe_Sitemap {
 
 
 
-	//SHORTCODE
-	//name: sm_sitemap
-	//description: inserts sitemap into page content
-	//format: [sm_sitemap]
+	// SHORTCODE
+	// name: sm_sitemap
+	// description: inserts sitemap into page content
+	// format: [sm_sitemap]
 	public static function sm_sitemap( $atts, $content = null ) {
 		$ouput = '<style>' . PHP_EOL;
 		$ouput .= '#smSitemap h1,#smSitemap h2,#smSitemap h3,#smSitemap h4,#smSitemap h5,#smSitemap h6 { display:inline; }' . PHP_EOL;

@@ -11,7 +11,7 @@ jobs:
       - run: echo $PWD
       - run: ls -lart
       - run: env COMPOSER=composer-test.json composer install --prefer-source --no-interaction
-      - run: sudo ./bin/phpcs --config-set installed_paths vendor/wp-coding-standards/wpcs/
+      - run: sudo ./bin/phpcs --config-set installed_paths $(readlink -f vendor/wp-coding-standards/wpcs/)
       - run: env COMPOSER=composer-test.json composer test
   notify:
     docker:
@@ -24,7 +24,7 @@ jobs:
               date=$(date +"%s $*")
               if [ -z "${DEV_GROUP}" ]; then DEV_GROUP=${CIRCLE_PROJECT_USERNAME}; fi
               http POST $SLACK_WEBHOOK \
-              channel='#seths-slack-bots' \
+              channel='#wpphx-github' \
               username="${DEV_GROUP}-Deploybot" \
               icon_emoji=':octocat:' \
               attachments:="

@@ -8,6 +8,11 @@
 
 namespace SM\Pages_Navigator\Admin;
 
+/**
+ * Class Navigator
+ *
+ * @package SM\Pages_Navigator\Admin
+ */
 class Navigator {
 	/**
 	 * Initialize by registering dashboard widgets into core.
@@ -23,8 +28,8 @@ class Navigator {
 		$output    .= '<div id="smPagetree"><p><a href="#" id="expand">Expand All</a> | <a href="#" id="collapse">Collapse All</a></p>' . static::get_sm_pagetreee( 0, 0 ) . '</div>' . PHP_EOL;
 		$memend2   = \memory_get_usage();
 		$mem_usage = (float) ( $memend2 - $memstart2 );
-		if(defined('WP_DEBUG') && 'true' === WP_DEBUG ) {
-			$output    .= '<span id="sm_nav_memory_used">Memory Used: ' . static::meg( $mem_usage ) . ' of ' . static::meg( $memend2 ) . '</span>';
+		if ( defined( 'WP_DEBUG' ) && 'true' === WP_DEBUG ) {
+			$output .= '<span id="sm_nav_memory_used">Memory Used: ' . static::meg( $mem_usage ) . ' of ' . static::meg( $memend2 ) . '</span>';
 		}
 		echo $output;
 	}
@@ -63,14 +68,14 @@ class Navigator {
 			foreach ( $pages as $page ) {
 				$children = [];
 
-				//if branch has children branches, create a new treebranch, otherwise create a treeleaf
+				// if branch has children branches, create a new treebranch, otherwise create a treeleaf
 				if ( $childCount > 0 ) {
 					$output .= "<li id=\"$page->ID\" class=\"treebranch\">" . PHP_EOL;
 				} else {
 					$output .= "<li id=\"$page->ID\" class=\"treeleaf\">" . PHP_EOL;
 				}
 
-				//begin setting up treeleaf leaflet content
+				// begin setting up treeleaf leaflet content
 				$output .= "<div class='treeleaflet'>" . PHP_EOL;
 				$output .= "<span class=\"leafname\">$page->post_title</span>";
 
@@ -87,15 +92,15 @@ class Navigator {
 
 					// show excluded if it is
 					if ( get_post_meta( $page->ID, '_sm_sitemap_exclude_completely', true ) == 'yes' && $page->post_status == 'publish' ) {
-						$output .= " <span class=\"status excluded\">no sitemap</span>";
+						$output .= ' <span class="status excluded">no sitemap</span>';
 					}
-					$output .= "<span class=\"action-links\">  - ";
+					$output .= '<span class="action-links">  - ';
 
-					//view link
+					// view link
 					if ( empty( $pageTemplate ) || $pageTemplate != 'tpl-404.php' ) {
-						$output .= "<a class=\"viewPage\" href=\"" . get_permalink( $page->ID ) . "\">view</a> " . PHP_EOL;
+						$output .= '<a class="viewPage" href="' . get_permalink( $page->ID ) . '">view</a> ' . PHP_EOL;
 					} else {
-						$output .= "Placeholder Page ";
+						$output .= 'Placeholder Page ';
 					}
 
 					$revAuthorID = $page->post_author;
@@ -105,20 +110,20 @@ class Navigator {
 					$post_type_object = get_post_type_object( $page->post_type );
 
 					if ( current_user_can( 'edit_others_pages' ) || ( $revAuthorID == $GLOBALS['current_user']->ID && current_user_can( 'edit_pages' ) ) ) {
-						$output .= "| <a class=\"editPage\" href=\"" . admin_url( sprintf( $post_type_object->_edit_link . '&action=edit', $page->ID ) ) . "\">edit</a> " . PHP_EOL;
+						$output .= '| <a class="editPage" href="' . admin_url( sprintf( $post_type_object->_edit_link . '&action=edit', $page->ID ) ) . '">edit</a> ' . PHP_EOL;
 					}
 
-					$output .= "</span>";
-					$output .= "</div>" . PHP_EOL;
+					$output .= '</span>';
+					$output .= '</div>' . PHP_EOL;
 
-				}// if($page->post_type != 'revision')
+				} // if($page->post_type != 'revision')
 
 				// if its a revision
 				elseif ( $page->post_type == 'revision' ) {
 
-					//display revision status
+					// display revision status
 					$output .= " <span class=\"status $page->post_type\">$page->post_type</span>";
-					$output .= "<span class=\"action-links\"> - ";
+					$output .= '<span class="action-links"> - ';
 					$output .= "<a class=\"viewPage\" href=\"/?p=$page->ID&amp;post_type=revision&amp;preview=true\">preview</a>" . PHP_EOL;
 
 					$revAuthorID = $page->post_author;
@@ -131,15 +136,15 @@ class Navigator {
 						$output .= " | <a class=\"editPage\" href=\"/wp-admin/admin.php?page=rvy-revisions&amp;revision=$page->ID&amp;action=edit\">edit</a>" . PHP_EOL;
 					}
 
-					$output .= "</span>";
+					$output .= '</span>';
 				}
 
 				// recall function to see if child pages have children
 				unset( $pages );
 				$output .= static::get_sm_pagetreee( $page->ID, $lvl );
-				$output .= "</li>" . PHP_EOL;
+				$output .= '</li>' . PHP_EOL;
 			}
-			$output .= "</ul>" . PHP_EOL;
+			$output .= '</ul>' . PHP_EOL;
 		}
 
 		return $output;
@@ -155,11 +160,11 @@ class Navigator {
 	public static function meg( $mem_usage ) {
 		$output = '';
 		if ( $mem_usage < 1024 ) {
-			$output .= $mem_usage . " bytes";
+			$output .= $mem_usage . ' bytes';
 		} elseif ( $mem_usage < 1048576 ) {
-			$output .= round( $mem_usage / 1024, 2 ) . " kilobytes";
+			$output .= round( $mem_usage / 1024, 2 ) . ' kilobytes';
 		} else {
-			$output .= round( $mem_usage / 1048576, 2 ) . " megabytes";
+			$output .= round( $mem_usage / 1048576, 2 ) . ' megabytes';
 		}
 
 		return $output;
