@@ -1,14 +1,31 @@
-.idea/*
-.htaccess
-wp-config.php
-wp-content/uploads/
-wp-content/blogs.dir/
-wp-content/upgrade/
-wp-content/backup-db/
-wp-content/advanced-cache.php
-wp-content/wp-cache-config.php
-sitemap.xml
-*.log
-wp-content/cache/
-wp-content/backups/
-sitemap.xml.gz
+# dirs
+/bin/
+
+# circle ci
+/lib/*/.circleci
+
+# composer
+composer.phar
+/vendor/
+/lib/autoload.php
+!/lib/composer/
+!/lib/composer/installed.json
+/lib/composer/*
+
+# windows junk
+Thumbs.db
+ehthumbs.db
+
+# apple junk
+.DS_STORE
+.ds_store
+
+# folder config file
+Desktop.ini
+
+# sublime
+*.sublime-project
+*.sublime-workspace
+
+# phpstorm
+.idea/

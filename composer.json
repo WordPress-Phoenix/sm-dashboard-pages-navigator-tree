@@ -1,0 +1,26 @@
+{
+  "name": "sm-dashboard-pages-navigator-tree",
+  "description": "TODO",
+  "keywords": [
+	"wordpress",
+	"site-options",
+	"utility",
+	"helper"
+  ],
+  "homepage": "https://github.com/WordPress-Phoenix/sm-dashboard-pages-navigator-tree",
+  "license": "GPL-3.0-or-later",
+  "authors": [
+	{
+	  "name": "WordPress Phoenix",
+	  "email": "code.devwalker@domain.test",
+	  "homepage": "https://github.com/WordPress-Phoenix/sm-dashboard-pages-navigator-tree",
+	  "role": "Developer"
+	}
+  ],
+  "require": {
+	"WordPress-Phoenix/abstract-plugin-base": "^2.6"
+  },
+  "config": {
+	"vendor-dir": "lib"
+  }
+}
