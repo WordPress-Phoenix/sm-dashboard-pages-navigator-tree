@@ -61,14 +61,14 @@ class Fe_Sitemap {
 		<div style="margin-bottom:10px;">
 			<input type="checkbox" name="sm_sitemap_exclude" id="sm_sitemap_exclude"
 				   value="yes" <?php if ( get_post_meta( $post->ID, '_sm_sitemap_exclude', true ) == 'yes' ) {
-						echo 'checked="checked"';
-} ?> >
+				echo 'checked="checked"';
+			} ?> >
 			<label for="sm_sitemap_exclude">Display page name in sitemap without link</label>
 		</div>
 		<input type="checkbox" name="sm_sitemap_exclude_completely" id="sm_sitemap_exclude_completely"
 			   value="yes" <?php if ( get_post_meta( $post->ID, '_sm_sitemap_exclude_completely', true ) == 'yes' ) {
-					echo 'checked="checked"';
-} ?> >
+			echo 'checked="checked"';
+		} ?> >
 		<label for="sm_sitemap_exclude">Exclude this page from sitemap</label>
 		<?php
 		// Use nonce for verification
@@ -108,17 +108,18 @@ class Fe_Sitemap {
 			$lvl ++;
 			$hlvl = $lvl + 1;
 			if ( $hlvl > 6 ) {
-				$hlvl == 6;
+				$hlvl = 6;
 			}
 
 			$output .= "<ul class='level$lvl'>" . PHP_EOL;
-			// loop through pages and add them to list
+			// loop through pages and add them to list.
 			foreach ( $pages as $page ) {
-				if ( get_post_meta( $page->ID, '_sm_sitemap_exclude_completely', true ) != 'yes' ) {
+				if ( get_post_meta( $page->ID, '_sm_sitemap_exclude_completely', true ) !== 'yes' ) {
 					$output .= "<li id='$page->ID' class=\"treelimb\">" . PHP_EOL;
 					$output .= "<div class='treeleaf'>" . PHP_EOL;
-					// if exclude box checked or page uses 404template just publish page title without link, otherwise create link to page
-					if ( get_post_meta( $page->ID, '_wp_page_template', true ) == 'tpl-404.php' || get_post_meta( $page->ID, '_sm_sitemap_exclude', true ) == 'yes' ) {
+					// if exclude box checked or page uses 404template just publish page title without link, otherwise create link to page.
+					if ( get_post_meta( $page->ID, '_wp_page_template', true ) === 'tpl-404.php' ||
+						 get_post_meta( $page->ID, '_sm_sitemap_exclude', true ) === 'yes' ) {
 						$output .= "<h$hlvl >" . $page->post_title . "</h$hlvl> " . PHP_EOL;
 						if ( current_user_can( 'edit_posts' ) ) {
 							$output .= '<a class="editPage" href="' . get_edit_post_link( $page->ID ) . '">[edit page]</a>' . PHP_EOL;
@@ -131,7 +132,7 @@ class Fe_Sitemap {
 					}
 
 					$output .= '</div>' . PHP_EOL;
-					// recall function to see if child pages have children
+					// recall function to see if child pages have children.
 					$output .= sm_pages_recursive( $page->ID, $lvl );
 
 					$output .= '</li>' . PHP_EOL;
@@ -143,31 +144,43 @@ class Fe_Sitemap {
 		return $output;
 	}
 
-
-	public static function sm_google_sitemap_recursive( $parentId, $lvl ) {
+	/**
+	 * Recursive function to dive into all pages and build them
+	 *
+	 * @param int $parent_id Parent Id.
+	 * @param int $lvl       The level.
+	 *
+	 * @return string
+	 */
+	public static function sm_google_sitemap_recursive( $parent_id, $lvl ) {
 		$output = '';
-		// get child pages
-		$args     = [
-			'child_of'    => $parentId,
-			'parent'      => $parentId,
+		// get child pages.
+		$args = [
+			'child_of'    => $parent_id,
+			'parent'      => $parent_id,
 			'post_type'   => 'page',
 			'post_status' => 'publish',
 		];
-		$thePages = get_pages( $args );
+		// @codingStandardsIgnoreLine get_pages is fine to use ignore rule
+		$the_pages = get_pages( $args );
 
-		$args     = [ 'post_parent' => $parentId, 'post_type' => 'post', 'numberposts' => - 1 ];
-		$thePosts = get_posts( $args );
+		$args = [ 'post_parent' => $parent_id, 'post_type' => 'post', 'numberposts' => - 1 ];
 
-		// die( (string)count($thePosts) );
-		$pages = array_merge( $thePages, $thePosts );
+		// @codingStandardsIgnoreLine get_posts is fine to use ignore rule
+		$the_posts = get_posts( $args );
+
+		$pages = array_merge( $the_pages, $the_posts );
 
 		if ( $pages ) {
 
-			// loop through pages and add them to list
+			// loop through pages and add them to list.
 			foreach ( $pages as $page ) {
 
-				// if exclude box checked or page uses 404template just publish page title without link, otherwise create link to page
-				if ( get_post_meta( $page->ID, '_wp_page_template', true ) == 'tpl-404.php' || get_post_meta( $page->ID, '_sm_sitemap_exclude', true ) == 'yes' || get_post_meta( $page->ID, '_sm_sitemap_exclude_completely', true ) == 'yes' ) {
+				// if exclude box checked or page uses 404template just publish page title without link, otherwise create link to page.
+				if ( get_post_meta( $page->ID, '_wp_page_template', true ) === 'tpl-404.php' ||
+					 get_post_meta( $page->ID, '_sm_sitemap_exclude', true ) === 'yes' ||
+					 get_post_meta( $page->ID, '_sm_sitemap_exclude_completely', true ) === 'yes' ) {
+					$output .= '';
 				} else {
 					$output .= '<url>' . PHP_EOL;
 					$output .= '<loc>' . get_permalink( $page->ID ) . '</loc>' . PHP_EOL;
@@ -175,43 +188,52 @@ class Fe_Sitemap {
 					$output .= '</url>' . PHP_EOL;
 				}
 
-				// recall function to see if child pages have children
-				$output .= sm_google_sitemap_recursive( $page->ID, $lvl );
+				// recall function to see if child pages have children.
+				$output .= self::sm_google_sitemap_recursive( $page->ID, $lvl );
 			}
-		}//if($pages)
+		}// end if pages
 		return $output;
 	}
 
+	/**
+	 * Get function which wraps XML around sitemap
+	 */
 	public static function get_sm_google_sitemap() {
 		$ouput = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
 		$ouput .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
 		$ouput .= sm_google_sitemap_recursive( 0, 0 ) . PHP_EOL;
 		$ouput .= '</urlset> ' . PHP_EOL;
+		// @codingStandardsIgnoreLine TODO Escape XML
 		echo $ouput;
 	}
 
-	// dispalys google sitemap when gsitemap page is called
+	/**
+	 * Dispalys google sitemap when gsitemap page is called.
+	 */
 	public static function sm_google_sitemap() {
 		if ( is_page( 'gsitemap' ) ) {
 			header( 'Content-type: text/xml' );
 			add_action( 'template_redirect', 'sm_google_sitemap' );
 			add_shortcode( 'sm_sitemap', 'sm_sitemap' );
-			echo get_sm_google_sitemap();
+			// @codingStandardsIgnoreLine TODO Escape XML
+			echo static::get_sm_google_sitemap();
 			exit();
 		}
 	}
 
-
-
-	// SHORTCODE
-	// name: sm_sitemap
-	// description: inserts sitemap into page content
-	// format: [sm_sitemap]
+	/**
+	 * Shorcode [sm_sitemap] inserts sitemap into page content
+	 *
+	 * @param array $atts    The attributes.
+	 * @param null  $content The content.
+	 *
+	 * @return string
+	 */
 	public static function sm_sitemap( $atts, $content = null ) {
 		$ouput = '<style>' . PHP_EOL;
 		$ouput .= '#smSitemap h1,#smSitemap h2,#smSitemap h3,#smSitemap h4,#smSitemap h5,#smSitemap h6 { display:inline; }' . PHP_EOL;
 		$ouput .= '</style>' . PHP_EOL;
-		$ouput .= '<div id="smSitemap">' . sm_pages_recursive( 0, 0 ) . '</div>' . PHP_EOL;
+		$ouput .= '<div id="smSitemap">' . static::sm_pages_recursive( 0, 0 ) . '</div>' . PHP_EOL;
 
 		return $ouput;
 	}

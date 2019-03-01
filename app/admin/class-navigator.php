@@ -21,8 +21,11 @@ class Navigator {
 		wp_add_dashboard_widget( 'sm-pagetree', 'Page Navigator', [ get_called_class(), 'list_sm_pagetree' ] );
 	}
 
+	/**
+	 * Wrapper function for building the page tree
+	 */
 	public static function list_sm_pagetree() {
-		// get and combine child pages and revision s
+		// get and combine child pages and revision.
 		$memstart2 = \memory_get_usage();
 		$output    = '';
 		$output    .= '<div id="smPagetree"><p><a href="#" id="expand">Expand All</a> | <a href="#" id="collapse">Collapse All</a></p>' . static::get_sm_pagetreee( 0, 0 ) . '</div>' . PHP_EOL;

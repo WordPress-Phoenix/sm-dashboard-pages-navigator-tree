@@ -46,7 +46,7 @@ class App {
 		static::$installed_url = $installed_url;
 		static::$version       = $version;
 
-		// Register the new dashboard widget and dependencies
+		// Register the new dashboard widget and dependencies.
 		add_action( 'wp_dashboard_setup', [ '\\SM\\Pages_Navigator\\Admin\\Navigator', 'register_widgets' ] );
 		add_action( 'admin_print_styles', [ get_called_class(), 'sm_pagetree_admin_styles' ] );
 		add_action( 'admin_enqueue_scripts', [ get_called_class(), 'sm_pagetree_admin_scripts' ] );
