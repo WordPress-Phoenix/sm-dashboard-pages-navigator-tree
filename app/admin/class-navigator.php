@@ -34,31 +34,33 @@ class Navigator {
 		if ( defined( 'WP_DEBUG' ) && 'true' === WP_DEBUG ) {
 			$output .= '<span id="sm_nav_memory_used">Memory Used: ' . static::meg( $mem_usage ) . ' of ' . static::meg( $memend2 ) . '</span>';
 		}
-		echo $output;
+
+		echo wp_kses( $output, 'post' );
 	}
 
 	/**
 	 * BUILD PAGE TREE - PRIMARY FUNCTION
 	 *
-	 * @param $parentId
-	 * @param $lvl
+	 * @param int $parent_id Parent ID for recursion.
+	 * @param int $lvl       Level for recursion.
 	 *
 	 * @return string
 	 */
-	public static function get_sm_pagetreee( $parentId, $lvl ) {
-		$output        = $childCount = '';
-		$pages         = get_pages( [
-			'child_of'    => $parentId,
-			'parent'      => $parentId,
+	public static function get_sm_pagetreee( $parent_id, $lvl ) {
+		$output               = $child_count = '';
+		$pages                = get_pages( [
+			'child_of'    => $parent_id,
+			'parent'      => $parent_id,
 			'post_type'   => 'page',
 			'post_status' => [ 'publish', 'pending', 'draft', 'private' ],
 		] );
-		$postRevisions = get_posts( [
-			'post_parent' => $parentId,
+		$post_revisions_query = new \WP_Query( [
+			'post_parent' => $parent_id,
 			'post_type'   => 'revision',
 			'post_status' => 'pending',
 		] );
-		$pages         = array_merge( (array) $postRevisions, (array) $pages );
+		$post_revisions       = $post_revisions_query->posts;
+		$pages                = array_merge( (array) $post_revisions, (array) $pages );
 
 		if ( $pages ) {
 			if ( $lvl < 1 ) {
@@ -67,82 +69,80 @@ class Navigator {
 				$output .= "<ul class='treebranch level" . $lvl ++ . "'>" . PHP_EOL;
 			}
 
-			// loop through pages and add them to treebranch
+			// loop through pages and add them to treebranch.
 			foreach ( $pages as $page ) {
 				$children = [];
 
-				// if branch has children branches, create a new treebranch, otherwise create a treeleaf
-				if ( $childCount > 0 ) {
+				// if branch has children branches, create a new treebranch, otherwise create a treeleaf.
+				if ( $child_count > 0 ) {
 					$output .= "<li id=\"$page->ID\" class=\"treebranch\">" . PHP_EOL;
 				} else {
 					$output .= "<li id=\"$page->ID\" class=\"treeleaf\">" . PHP_EOL;
 				}
 
-				// begin setting up treeleaf leaflet content
+				// begin setting up treeleaf leaflet content.
 				$output .= "<div class='treeleaflet'>" . PHP_EOL;
 				$output .= "<span class=\"leafname\">$page->post_title</span>";
 
-				// show child count if there are children
-				if ( $childCount > 0 ) {
-					$output .= '<span class="childCount"> (' . $childCount . ')</span> ';
+				// show child count if there are children.
+				if ( $child_count > 0 ) {
+					$output .= '<span class="childCount"> (' . $child_count . ')</span> ';
 				}
 
-				// if its not a revision
-				if ( $page->post_type != 'revision' ) {
+				// if its not a revision.
+				if ( 'revision' !== $page->post_type ) {
 
-					// display status
+					// display status.
 					$output .= " <span class=\"status $page->post_status\">$page->post_status</span>";
 
-					// show excluded if it is
-					if ( get_post_meta( $page->ID, '_sm_sitemap_exclude_completely', true ) == 'yes' && $page->post_status == 'publish' ) {
+					// show excluded if it is.
+					if ( 'yes' === get_post_meta( $page->ID, '_sm_sitemap_exclude_completely', true ) && 'publish' === $page->post_status ) {
 						$output .= ' <span class="status excluded">no sitemap</span>';
 					}
 					$output .= '<span class="action-links">  - ';
 
-					// view link
-					if ( empty( $pageTemplate ) || $pageTemplate != 'tpl-404.php' ) {
+					// view link.
+					if ( empty( $page_template ) || 'tpl-404.php' !== $page_template ) {
 						$output .= '<a class="viewPage" href="' . get_permalink( $page->ID ) . '">view</a> ' . PHP_EOL;
 					} else {
 						$output .= 'Placeholder Page ';
 					}
 
-					$revAuthorID = $page->post_author;
-					// if current user not revision editor do not allow to make changes
-					if ( $revAuthorID == $GLOBALS['current_user']->ID && ! current_user_can( 'edit_others_revisions' ) ) {
+					$rev_author_id = $page->post_author;
+					// if current user not revision editor do not allow to make changes.
+					if ( $rev_author_id === $GLOBALS['current_user']->ID && ! current_user_can( 'edit_others_revisions' ) ) {
+						return 0;
 					}
 					$post_type_object = get_post_type_object( $page->post_type );
 
-					if ( current_user_can( 'edit_others_pages' ) || ( $revAuthorID == $GLOBALS['current_user']->ID && current_user_can( 'edit_pages' ) ) ) {
+					if ( current_user_can( 'edit_others_pages' ) || ( $rev_author_id === $GLOBALS['current_user']->ID && current_user_can( 'edit_pages' ) ) ) {
 						$output .= '| <a class="editPage" href="' . admin_url( sprintf( $post_type_object->_edit_link . '&action=edit', $page->ID ) ) . '">edit</a> ' . PHP_EOL;
 					}
 
 					$output .= '</span>';
 					$output .= '</div>' . PHP_EOL;
 
-				} // if($page->post_type != 'revision')
-
-				// if its a revision
-				elseif ( $page->post_type == 'revision' ) {
-
-					// display revision status
+					return $page->ID;
+				} elseif ( 'revision' === $page->post_type ) { // if its a revision.
+					// display revision status.
 					$output .= " <span class=\"status $page->post_type\">$page->post_type</span>";
 					$output .= '<span class="action-links"> - ';
 					$output .= "<a class=\"viewPage\" href=\"/?p=$page->ID&amp;post_type=revision&amp;preview=true\">preview</a>" . PHP_EOL;
 
-					$revAuthorID = $page->post_author;
+					$rev_author_id = $page->post_author;
 
-					$current_user  = wp_get_current_user();
-					$currentUserID = $current_user->ID;
+					$current_user    = wp_get_current_user();
+					$current_user_id = $current_user->ID;
 
-					// if current user not revision editor do not allow to make changes
-					if ( $revAuthorID == $currentUserID && current_user_can( 'edit_others_revisions' ) ) {
+					// if current user not revision editor do not allow to make changes.
+					if ( $rev_author_id === $current_user_id && current_user_can( 'edit_others_revisions' ) ) {
 						$output .= " | <a class=\"editPage\" href=\"/wp-admin/admin.php?page=rvy-revisions&amp;revision=$page->ID&amp;action=edit\">edit</a>" . PHP_EOL;
 					}
 
 					$output .= '</span>';
 				}
 
-				// recall function to see if child pages have children
+				// recall function to see if child pages have children.
 				unset( $pages );
 				$output .= static::get_sm_pagetreee( $page->ID, $lvl );
 				$output .= '</li>' . PHP_EOL;
@@ -156,7 +156,7 @@ class Navigator {
 	/**
 	 * Converts bytes to Megabtypes
 	 *
-	 * @param $mem_usage
+	 * @param int $mem_usage Memory usage value in bytes.
 	 *
 	 * @return string
 	 */

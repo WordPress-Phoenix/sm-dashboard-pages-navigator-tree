@@ -15,6 +15,9 @@ namespace SM\Pages_Navigator;
  */
 class Fe_Sitemap {
 
+	/**
+	 * Static Initialization
+	 */
 	public static function register() {
 		/* Add Exclude Page Meta Box  */
 		add_action( 'add_meta_boxes', [ get_called_class(), 'sm_sitemap_exclude_init' ], 10 );
@@ -23,7 +26,9 @@ class Fe_Sitemap {
 		add_shortcode( 'sm_sitemap', [ get_called_class(), 'sm_sitemap' ] );
 	}
 
-	// create page for gsitemap
+	/**
+	 * Create page for gsitemap.
+	 */
 	public static function sm_create_gsitemap() {
 		$new_page_title = 'Google Sitemap';
 		$page_check     = get_page_by_title( $new_page_title );
@@ -41,7 +46,9 @@ class Fe_Sitemap {
 		}
 	}
 
-	// permanently trash google sitemap page
+	/**
+	 * Permanently trash google sitemap page.
+	 */
 	public static function sm_remove_gsitemap() {
 		$page_check = get_page_by_title( 'Google Sitemap' );
 		if ( isset( $page_check->ID ) ) {
@@ -49,32 +56,47 @@ class Fe_Sitemap {
 		}
 	}
 
+	/**
+	 * Exclude from sitemap callback functioun for pages.
+	 */
 	public static function sm_sitemap_exclude_init() {
 		add_meta_box( 'exclude', __( 'Exclude from Sitemap', 'sm' ), 'sm_exclude_form', 'page', 'side', '' );
 	}
 
+	/**
+	 * Exclude from sitemap meta box form for pages.
+	 */
 	public static function sm_exclude_form() {
 		global $post;
-		$post_data = get_post_custom( $post->ID );
-		$exclude   = $post_data['sm_sitemap_exclude'][0];
+		$post_data                             = get_post_custom( $post->ID );
+		$exclude                               = $post_data['sm_sitemap_exclude'][0];
+		$sm_sitemap_exclude_cb_attr            = '';
+		$sm_sitemap_exclude_completely_cb_attr = '';
+		if ( get_post_meta( $post->ID, '_sm_sitemap_exclude', true ) === 'yes' ) {
+			$sm_sitemap_exclude_cb_attr = 'checked="checked"';
+		}
+		if ( get_post_meta( $post->ID, '_sm_sitemap_exclude_completely', true ) === 'yes' ) {
+			$sm_sitemap_exclude_completely_cb_attr = 'checked="checked"';
+		}
 		?>
 		<div style="margin-bottom:10px;">
 			<input type="checkbox" name="sm_sitemap_exclude" id="sm_sitemap_exclude"
-				   value="yes" <?php if ( get_post_meta( $post->ID, '_sm_sitemap_exclude', true ) == 'yes' ) {
-				echo 'checked="checked"';
-			} ?> >
+				   value="yes" <?php echo esc_attr( $sm_sitemap_exclude_cb_attr ) ?> >
 			<label for="sm_sitemap_exclude">Display page name in sitemap without link</label>
 		</div>
 		<input type="checkbox" name="sm_sitemap_exclude_completely" id="sm_sitemap_exclude_completely"
-			   value="yes" <?php if ( get_post_meta( $post->ID, '_sm_sitemap_exclude_completely', true ) == 'yes' ) {
-			echo 'checked="checked"';
-		} ?> >
-		<label for="sm_sitemap_exclude">Exclude this page from sitemap</label>
+			   value="yes" <?php echo esc_attr( $sm_sitemap_exclude_completely_cb_attr ) ?> >
+		<label for="sm_sitemap_exclude_completely">Exclude this page from sitemap</label>
 		<?php
-		// Use nonce for verification
+		// Output nonce for verification on submit.
 		wp_nonce_field( plugin_basename( __FILE__ ), 'sm_sitemap_nonce' );
 	}
 
+	/**
+	 * Sitemap form exclude autosave callback.
+	 *
+	 * @return bool|int
+	 */
 	public static function sm_sitemap_exclude_save() {
 		global $post;
 
@@ -82,26 +104,36 @@ class Fe_Sitemap {
 			return $post->ID;
 		}
 
-		// verify
-		if ( ! wp_verify_nonce( $_POST['sm_sitemap_nonce'], plugin_basename( __FILE__ ) ) ) {
-			return;
+		$posted_post_type = static::get_server_post_param( 'post_type' );
+		if ( empty( $posted_post_type ) ) {
+			return 0;
 		}
-		if ( 'page' == $_POST['post_type'] ) {
+		if ( 'page' === static::get_server_post_param( 'post_type' ) ) {
 			if ( ! current_user_can( 'edit_page', $post->ID ) ) {
-				return;
+				return 0;
 			} elseif ( ! current_user_can( 'edit_post', $post->ID ) ) {
-				return;
+				return 0;
 			}
 		}
-		// update the option
-		update_post_meta( $post->ID, '_sm_sitemap_exclude', $_POST['sm_sitemap_exclude'] );
-		update_post_meta( $post->ID, '_sm_sitemap_exclude_completely', $_POST['sm_sitemap_exclude_completely'] );
+
+		update_post_meta( $post->ID, '_sm_sitemap_exclude', static::get_server_post_param( 'sm_sitemap_exclude' ) );
+		update_post_meta( $post->ID, '_sm_sitemap_exclude_completely', static::get_server_post_param( 'sm_sitemap_exclude_completely' ) );
+
+		return true;
 	}
 
-	public static function sm_pages_recursive( $parentId, $lvl ) {
+	/**
+	 * Recusive function that when called loops through all pages of all levels up to 6 lvs deep.
+	 *
+	 * @param int $parent_id parent id for recursion.
+	 * @param int $lvl       level deep for recursion.
+	 *
+	 * @return string
+	 */
+	public static function sm_pages_recursive( $parent_id, $lvl ) {
 		$output = '';
-		// get child pages
-		$args  = [ 'child_of' => $parentId, 'parent' => $parentId ];
+		// get child pages.
+		$args  = [ 'child_of' => $parent_id, 'parent' => $parent_id ];
 		$pages = get_pages( $args );
 
 		if ( $pages ) {
@@ -120,12 +152,12 @@ class Fe_Sitemap {
 					// if exclude box checked or page uses 404template just publish page title without link, otherwise create link to page.
 					if ( get_post_meta( $page->ID, '_wp_page_template', true ) === 'tpl-404.php' ||
 						 get_post_meta( $page->ID, '_sm_sitemap_exclude', true ) === 'yes' ) {
-						$output .= "<h$hlvl >" . $page->post_title . "</h$hlvl> " . PHP_EOL;
+						$output .= "<span class=\"level$hlvl\" >" . $page->post_title . '</span> ' . PHP_EOL;
 						if ( current_user_can( 'edit_posts' ) ) {
 							$output .= '<a class="editPage" href="' . get_edit_post_link( $page->ID ) . '">[edit page]</a>' . PHP_EOL;
 						}
 					} else {
-						$output .= "<h$hlvl ><a href=\"" . get_permalink( $page->ID ) . '">' . $page->post_title . "</a></h$hlvl> " . PHP_EOL;
+						$output .= "<span class=\"level$hlvl\" ><a href=\"" . get_permalink( $page->ID ) . '">' . $page->post_title . '</a></span> ' . PHP_EOL;
 						if ( current_user_can( 'edit_posts' ) ) {
 							$output .= '<a class="editPage" href="' . get_edit_post_link( $page->ID ) . '">[edit page]</a>' . PHP_EOL;
 						}
@@ -133,7 +165,7 @@ class Fe_Sitemap {
 
 					$output .= '</div>' . PHP_EOL;
 					// recall function to see if child pages have children.
-					$output .= sm_pages_recursive( $page->ID, $lvl );
+					$output .= static::sm_pages_recursive( $page->ID, $lvl );
 
 					$output .= '</li>' . PHP_EOL;
 				}
@@ -201,10 +233,10 @@ class Fe_Sitemap {
 	public static function get_sm_google_sitemap() {
 		$ouput = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
 		$ouput .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
-		$ouput .= sm_google_sitemap_recursive( 0, 0 ) . PHP_EOL;
+		$ouput .= static::sm_google_sitemap_recursive( 0, 0 ) . PHP_EOL;
 		$ouput .= '</urlset> ' . PHP_EOL;
-		// @codingStandardsIgnoreLine TODO Escape XML
-		echo $ouput;
+
+		return $ouput;
 	}
 
 	/**
@@ -236,5 +268,22 @@ class Fe_Sitemap {
 		$ouput .= '<div id="smSitemap">' . static::sm_pages_recursive( 0, 0 ) . '</div>' . PHP_EOL;
 
 		return $ouput;
+	}
+
+	/**
+	 * Utility helper function for sanatizing globals
+	 *
+	 * @param string $key $_POST key that you want the value of.
+	 *
+	 * @return string
+	 */
+	public static function get_server_post_param( $key ) {
+		if ( isset( $_POST[ $key ], $_POST['sm_sitemap_nonce'] )
+			 && wp_verify_nonce( sanitize_key( $_POST['sm_sitemap_nonce'] ), plugin_basename( __FILE__ ) ) ) {
+			return sanitize_text_field( wp_unslash( $_POST[ $key ] ) );
+		} else {
+			return false;
+		}
+
 	}
 }

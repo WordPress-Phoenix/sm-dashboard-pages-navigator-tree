@@ -43,6 +43,7 @@ class Plugin extends Abstract_Plugin {
 	 * @return void
 	 */
 	public static function activate() {
+		include_once 'class-fe-sitemap.php';
 		Fe_Sitemap::sm_create_gsitemap();
 	}
 
@@ -52,6 +53,7 @@ class Plugin extends Abstract_Plugin {
 	 * @return void
 	 */
 	public static function deactivate() {
+		include_once 'class-fe-sitemap.php';
 		Fe_Sitemap::sm_remove_gsitemap();
 	}
 
