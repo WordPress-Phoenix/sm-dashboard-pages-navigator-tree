@@ -28,7 +28,7 @@ class Navigator {
 		// get and combine child pages and revision.
 		$memstart2 = \memory_get_usage();
 		$output    = '';
-		$output    .= '<div id="smPagetree"><p><a href="#" id="expand">Expand All</a> | <a href="#" id="collapse">Collapse All</a></p>' . static::get_sm_pagetreee( 0, 0 ) . '</div>' . PHP_EOL;
+		$output    .= '<div id="smPagetree"><p><a href="#" id="expand">Expand All</a> | <a href="#" id="collapse">Collapse All</a></p>' . static::get_sm_pagetree( 0, 0 ) . '</div>' . PHP_EOL;
 		$memend2   = \memory_get_usage();
 		$mem_usage = (float) ( $memend2 - $memstart2 );
 		if ( defined( 'WP_DEBUG' ) && 'true' === WP_DEBUG ) {
@@ -46,7 +46,7 @@ class Navigator {
 	 *
 	 * @return string
 	 */
-	public static function get_sm_pagetreee( $parent_id, $lvl ) {
+	public static function get_sm_pagetree( $parent_id, $lvl ) {
 		$output               = $child_count = '';
 		$pages                = get_pages( [
 			'child_of'    => $parent_id,
@@ -109,10 +109,6 @@ class Navigator {
 					}
 
 					$rev_author_id = $page->post_author;
-					// if current user not revision editor do not allow to make changes.
-					if ( $rev_author_id === $GLOBALS['current_user']->ID && ! current_user_can( 'edit_others_revisions' ) ) {
-						return 0;
-					}
 					$post_type_object = get_post_type_object( $page->post_type );
 
 					if ( current_user_can( 'edit_others_pages' ) || ( $rev_author_id === $GLOBALS['current_user']->ID && current_user_can( 'edit_pages' ) ) ) {
@@ -121,8 +117,6 @@ class Navigator {
 
 					$output .= '</span>';
 					$output .= '</div>' . PHP_EOL;
-
-					return $page->ID;
 				} elseif ( 'revision' === $page->post_type ) { // if its a revision.
 					// display revision status.
 					$output .= " <span class=\"status $page->post_type\">$page->post_type</span>";
@@ -144,7 +138,7 @@ class Navigator {
 
 				// recall function to see if child pages have children.
 				unset( $pages );
-				$output .= static::get_sm_pagetreee( $page->ID, $lvl );
+				$output .= static::get_sm_pagetree( $page->ID, $lvl );
 				$output .= '</li>' . PHP_EOL;
 			}
 			$output .= '</ul>' . PHP_EOL;
