@@ -91,11 +91,11 @@ class Fe_Sitemap {
 		?>
 		<div style="margin-bottom:10px;">
 			<input type="checkbox" name="sm_sitemap_exclude" id="sm_sitemap_exclude"
-				   value="yes" <?php echo esc_attr( $sm_sitemap_exclude_cb_attr ) ?> >
+				   value="yes" <?php echo esc_attr( $sm_sitemap_exclude_cb_attr ); ?> >
 			<label for="sm_sitemap_exclude">Display page name in sitemap without link</label>
 		</div>
 		<input type="checkbox" name="sm_sitemap_exclude_completely" id="sm_sitemap_exclude_completely"
-			   value="yes" <?php echo esc_attr( $sm_sitemap_exclude_completely_cb_attr ) ?> >
+			   value="yes" <?php echo esc_attr( $sm_sitemap_exclude_completely_cb_attr ); ?> >
 		<label for="sm_sitemap_exclude_completely">Exclude this page from sitemap</label>
 		<?php
 		// Output nonce for verification on submit.
@@ -143,7 +143,10 @@ class Fe_Sitemap {
 	public static function sm_pages_recursive( $parent_id, $lvl ) {
 		$output = '';
 		// get child pages.
-		$args  = [ 'child_of' => $parent_id, 'parent' => $parent_id ];
+		$args  = [
+			'child_of' => $parent_id,
+			'parent'   => $parent_id,
+		];
 		$pages = get_pages( $args );
 
 		if ( $pages ) {
@@ -206,7 +209,11 @@ class Fe_Sitemap {
 		// @codingStandardsIgnoreLine get_pages is fine to use ignore rule
 		$the_pages = get_pages( $args );
 
-		$args = [ 'post_parent' => $parent_id, 'post_type' => 'post', 'numberposts' => - 1 ];
+		$args = [
+			'post_parent' => $parent_id,
+			'post_type'   => 'post',
+			'numberposts' => - 1,
+		];
 
 		// @codingStandardsIgnoreLine get_posts is fine to use ignore rule
 		$the_posts = get_posts( $args );
@@ -242,6 +249,7 @@ class Fe_Sitemap {
 	 */
 	public static function get_sm_google_sitemap() {
 		$ouput = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
+		// extend output.
 		$ouput .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
 		$ouput .= static::sm_google_sitemap_recursive( 0, 0 ) . PHP_EOL;
 		$ouput .= '</urlset> ' . PHP_EOL;
@@ -273,6 +281,7 @@ class Fe_Sitemap {
 	 */
 	public static function sm_sitemap( $atts, $content = null ) {
 		$ouput = '<style>' . PHP_EOL;
+		// extend output.
 		$ouput .= '#smSitemap h1,#smSitemap h2,#smSitemap h3,#smSitemap h4,#smSitemap h5,#smSitemap h6 { display:inline; }' . PHP_EOL;
 		$ouput .= '</style>' . PHP_EOL;
 		$ouput .= '<div id="smSitemap">' . static::sm_pages_recursive( 0, 0 ) . '</div>' . PHP_EOL;
@@ -288,8 +297,8 @@ class Fe_Sitemap {
 	 * @return string
 	 */
 	public static function get_server_post_param( $key ) {
-		if ( isset( $_POST[ $key ], $_POST['sm_sitemap_nonce'] )
-			 && wp_verify_nonce( sanitize_key( $_POST['sm_sitemap_nonce'] ), plugin_basename( __FILE__ ) ) ) {
+		if ( isset( $_POST[ $key ], $_POST['sm_sitemap_nonce'] ) &&
+			 wp_verify_nonce( sanitize_key( $_POST['sm_sitemap_nonce'] ), plugin_basename( __FILE__ ) ) ) {
 			return sanitize_text_field( wp_unslash( $_POST[ $key ] ) );
 		} else {
 			return false;

@@ -27,8 +27,7 @@ class Navigator {
 	public static function list_sm_pagetree() {
 		// get and combine child pages and revision.
 		$memstart2 = \memory_get_usage();
-		$output    = '';
-		$output    .= '<div id="smPagetree"><p><a href="#" id="expand">Expand All</a> | <a href="#" id="collapse">Collapse All</a></p>' . static::get_sm_pagetree( 0, 0 ) . '</div>' . PHP_EOL;
+		$output    = '<div id="smPagetree"><p><a href="#" id="expand">Expand All</a> | <a href="#" id="collapse">Collapse All</a></p>' . static::get_sm_pagetree( 0, 0 ) . '</div>' . PHP_EOL;
 		$memend2   = \memory_get_usage();
 		$mem_usage = (float) ( $memend2 - $memstart2 );
 		if ( defined( 'WP_DEBUG' ) && 'true' === WP_DEBUG ) {
@@ -47,26 +46,31 @@ class Navigator {
 	 * @return string
 	 */
 	public static function get_sm_pagetree( $parent_id, $lvl ) {
-		$output               = $child_count = '';
-		$pages                = get_pages( [
-			'child_of'    => $parent_id,
-			'parent'      => $parent_id,
-			'post_type'   => 'page',
-			'post_status' => [ 'publish', 'pending', 'draft', 'private' ],
-		] );
-		$post_revisions_query = new \WP_Query( [
-			'post_parent' => $parent_id,
-			'post_type'   => 'revision',
-			'post_status' => 'pending',
-		] );
+		$output               = '';
+		$child_count          = '';
+		$pages                = get_pages(
+			[
+				'child_of'    => $parent_id,
+				'parent'      => $parent_id,
+				'post_type'   => 'page',
+				'post_status' => [ 'publish', 'pending', 'draft', 'private' ],
+			]
+		);
+		$post_revisions_query = new \WP_Query(
+			[
+				'post_parent' => $parent_id,
+				'post_type'   => 'revision',
+				'post_status' => 'pending',
+			]
+		);
 		$post_revisions       = $post_revisions_query->posts;
 		$pages                = array_merge( (array) $post_revisions, (array) $pages );
 
 		if ( $pages ) {
 			if ( $lvl < 1 ) {
-				$output .= "<ul id=\"simpletree\" class='level" . $lvl ++ . "'>" . PHP_EOL;
+				$output .= "<ul id=\"simpletree\" class='level" . ( $lvl ++ ) . "'>" . PHP_EOL;
 			} else {
-				$output .= "<ul class='treebranch level" . $lvl ++ . "'>" . PHP_EOL;
+				$output .= "<ul class='treebranch level" . ( $lvl ++ ) . "'>" . PHP_EOL;
 			}
 
 			// loop through pages and add them to treebranch.
@@ -108,7 +112,7 @@ class Navigator {
 						$output .= 'Placeholder Page ';
 					}
 
-					$rev_author_id = $page->post_author;
+					$rev_author_id    = $page->post_author;
 					$post_type_object = get_post_type_object( $page->post_type );
 
 					if ( current_user_can( 'edit_others_pages' ) || ( $rev_author_id === $GLOBALS['current_user']->ID && current_user_can( 'edit_pages' ) ) ) {

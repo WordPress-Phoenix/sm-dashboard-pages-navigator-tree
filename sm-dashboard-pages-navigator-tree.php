@@ -36,6 +36,6 @@ if ( ! class_exists( 'WPAZ_Plugin_Base\\V_2_6\\Abstract_Plugin' ) ) {
 /**
  * INTERNAL DEPENDENCIES (autoloader defined in main plugin class)
  */
-include_once $current_dir . 'app/class-plugin.php';
+require_once $current_dir . 'app/class-plugin.php';
 
 SM\Pages_Navigator\Plugin::run( __FILE__ );
