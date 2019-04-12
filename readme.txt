@@ -1,19 +1,19 @@
 === SM Dashboard Pages Navigator Tree===
 
-Contributors: sethmatics
+Contributors: sethcarstens, sethmatics
 Donate link: http://sethmatics.com/extend/plugins/sm-dashboard-pages-navigator-tree/
 Tags: admin, dashboard, widget, tree, navigation, navigate, navi, page, pages, links, hierarchy
 Requires at least: 3.4
 Tested up to: 5.1.1
-Stable tag: 2.1.1
+Stable tag: trunk
 
-Navigate all your pages, with labels for private and pending, in a nice page tree heirarchy on the admin dashboard provided by http://sethmatics.com/.
+Navigate all your pages, with labels for private and pending, in a nice page tree hierarchy on the admin dashboard.
 
 == Description ==
 
-Do not activate if you have more then 5,000 pages.
+Do not activate if you have more then 5,000 pages. For issues please use github issues: [github.com/WordPress-Phoenix/sm-dashboard-pages-navigator-tree/issues](https://github.com/WordPress-Phoenix/sm-dashboard-pages-navigator-tree/issues)
 
-Navigate your pages, with labels for private and pending, in a nice page tree heirarchy sitemap on the admin dashboard provided by http://sethmatics.com/.
+Navigate your pages, with labels for private and pending, in a nice page tree heirarchy sitemap on the admin dashboard provided by [Seth Carstens](https://sethcarstens.com) and [Sethmatics](http://sethmatics.com/).
 
 Features include:
 
@@ -32,6 +32,12 @@ To install the plugin manually:
 4. Visit the dashboard section from within /wp-admin/.
 
 == Changelog ==
+
+Version 2.1.3
+
+- Updated plugin files to use APB (Abstract plugin base).
+- Refactored composer tests
+- Connected to CircleCI and Github
 
 Version 1.0.0
 
@@ -54,7 +60,7 @@ A: Check the "screen options" dropdown, located in the upper right area of the d
 
 Q: Where is the options panel?
 
-A: There is no options panel. The only changes you will see in the wp-admin is an additional column on the "posts" page that now has a Sticky Clicky Star.
+A: There is no options panel.
 
 == Screenshots ==
 

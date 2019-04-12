@@ -15,8 +15,9 @@
  * Plugin Name: SM Dashboard Pages Navigator Tree
  * Plugin URI: https://github.com/WordPress-Phoenix/sm-dashboard-pages-navigator-tree
  * Description: Dashboard widget with Pages Navigator and a FrontEnd shortcode to build html sitemaps.
- * Version: 2.1.1
- * Author: Seth Carstens  - WordPress Phoenix
+ * Version: 2.1.4
+ * Author: Seth Carstens
+ * Author URI: https://sethcarstens.com
  * Text Domain: sm-dashboard-pages-navigator-tree
  * License: GNU GPL v2.0+
  */
