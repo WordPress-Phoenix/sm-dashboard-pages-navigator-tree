@@ -41,7 +41,7 @@ class App {
 	 * @param string $installed_url Installed URL.
 	 * @param string $version       Version.
 	 */
-	function __construct( $installed_dir, $installed_url, $version ) {
+	public function __construct( $installed_dir, $installed_url, $version ) {
 		static::$installed_dir = $installed_dir;
 		static::$installed_url = $installed_url;
 		static::$version       = $version;
@@ -67,8 +67,8 @@ class App {
 	 */
 	public static function sm_pagetree_admin_scripts() {
 		if ( did_action( 'wp_dashboard_setup' ) > 0 ) {
-			wp_enqueue_script( 'sm-pagetree-admin-scripts', static::$installed_url . 'assets/js/sm-pagetree-admin-scripts.js', [ 'jquery' ] );
-			wp_enqueue_script( 'simple-tree-view', static::$installed_url . 'assets/js/jquery.simpletreeview.js', [ 'jquery' ] );
+			wp_enqueue_script( 'sm-pagetree-admin-scripts', static::$installed_url . 'assets/js/sm-pagetree-admin-scripts.js', [ 'jquery' ], static::$version, true );
+			wp_enqueue_script( 'simple-tree-view', static::$installed_url . 'assets/js/jquery.simpletreeview.js', [ 'jquery' ], static::$version, true );
 		}
 	}
 }

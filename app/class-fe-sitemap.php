@@ -60,7 +60,17 @@ class Fe_Sitemap {
 	 * Exclude from sitemap callback functioun for pages.
 	 */
 	public static function sm_sitemap_exclude_init() {
-		add_meta_box( 'exclude', __( 'Exclude from Sitemap', 'sm' ), 'sm_exclude_form', 'page', 'side', '' );
+		add_meta_box(
+			'sm_sitemap_exclude',
+			__( 'Exclude from Sitemap', 'sm' ),
+			[
+				get_called_class(),
+				'sm_exclude_form',
+			],
+			'page',
+			'side',
+			''
+		);
 	}
 
 	/**

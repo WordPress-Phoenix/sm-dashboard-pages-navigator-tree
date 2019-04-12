@@ -1,6 +1,8 @@
 SM Dashboard Pages Navigator Tree
 =================================
 
+[![CircleCI](https://circleci.com/gh/WordPress-Phoenix/sm-dashboard-pages-navigator-tree/tree/master.svg?style=svg)](https://circleci.com/gh/WordPress-Phoenix/sm-dashboard-pages-navigator-tree/tree/master)
+
 Navigational Dashboard Widget for easily finding your pages in a heirarchy page tree view on your WordPress admin dashboard
 
 ## UPDATING `/lib` files
