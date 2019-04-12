@@ -15,7 +15,7 @@ jobs:
             echo $PWD
             ls -lart
             composer install --prefer-source --no-interaction
-            bash ./bin/phpcs --config-set installed_paths vendor/wp-coding-standards/wpcs/
+            ./bin/phpcs --config-set installed_paths vendor/wp-coding-standards/wpcs/
             composer test
   notify:
     docker:
