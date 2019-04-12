@@ -7,21 +7,21 @@
  * @subpackage     Sm_dashboard_pages_navigator_tree
  * @author         Seth Carstens - WordPress Phoenix
  * @license        GNU GPL v2.0+
- * @link           TODO
+ * @link           https://github.com/WordPress-Phoenix/sm-dashboard-pages-navigator-tree
  *
  * Built with WP PHX WordPress Development Toolkit v3.1.0 on Friday 1st of March 2019 06:36:00 PM
  * @link           https://github.com/WordPress-Phoenix/wordpress-development-toolkit
  *
  * Plugin Name: SM Dashboard Pages Navigator Tree
- * Plugin URI: TODO
- * Description: TODO
- * Version: 2.0.0
+ * Plugin URI: https://github.com/WordPress-Phoenix/sm-dashboard-pages-navigator-tree
+ * Description: Dashboard widget with Pages Navigator and a FrontEnd shortcode to build html sitemaps.
+ * Version: 2.1.0
  * Author: Seth Carstens  - WordPress Phoenix
  * Text Domain: sm-dashboard-pages-navigator-tree
  * License: GNU GPL v2.0+
  */
 
-defined( 'ABSPATH' ) or die(); // WordPress must exist.
+defined( 'ABSPATH' ) || die(); // WordPress must exist.
 
 $current_dir = trailingslashit( dirname( __FILE__ ) );
 

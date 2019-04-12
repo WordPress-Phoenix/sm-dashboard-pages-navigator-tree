@@ -1,6 +1,7 @@
 {
   "name": "sm-dashboard-pages-navigator-tree",
-  "description": "TODO",
+  "description": "Dashboard Pages Navigator Tree plus extras!",
+  "type": "wordpress-plugin",
   "keywords": [
 	"wordpress",
 	"site-options",
@@ -12,10 +13,15 @@
   "authors": [
 	{
 	  "name": "WordPress Phoenix",
-	  "email": "code.devwalker@domain.test",
-	  "homepage": "https://github.com/WordPress-Phoenix/sm-dashboard-pages-navigator-tree",
-	  "role": "Developer"
-	}
+	  "homepage": "https://github.com/WordPress-Phoenix",
+	  "role": "Group"
+	},
+    {
+      "name": "Seth Carstens",
+      "email": "seth.carstens@gmail.com",
+      "homepage": "https://github.com/scarstens",
+      "role": "Developer"
+    }
   ],
   "require": {
 	"WordPress-Phoenix/abstract-plugin-base": "^2.6"
