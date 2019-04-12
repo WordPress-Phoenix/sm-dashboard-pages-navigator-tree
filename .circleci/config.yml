@@ -8,11 +8,10 @@ jobs:
     steps:
       - checkout
       - run: sudo chmod 777 -R ~
-      - run: echo $PWD
-      - run: ls -lart
-      - run: env COMPOSER=composer-test.json composer install --prefer-source --no-interaction
-      - run: sudo ./bin/phpcs --config-set installed_paths vendor/wp-coding-standards/wpcs/
-      - run: env COMPOSER=composer-test.json composer test
+      - run: cd tests && echo $PWD && ls -lart
+      - run: composer install --prefer-source --no-interaction
+      - run: bash ./bin/phpcs --config-set installed_paths vendor/wp-coding-standards/wpcs/
+      - run: composer test
   notify:
     docker:
       - image: circleci/node:latest
