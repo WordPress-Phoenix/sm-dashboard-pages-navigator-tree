@@ -1,5 +1,6 @@
 # dirs
 /bin/
+*/bin/
 
 # circle ci
 /lib/*/.circleci
@@ -7,6 +8,7 @@
 # composer
 composer.phar
 /vendor/
+*/vendor/
 /lib/autoload.php
 !/lib/composer/
 !/lib/composer/installed.json
