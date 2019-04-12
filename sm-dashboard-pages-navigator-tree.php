@@ -21,7 +21,7 @@
  * License: GNU GPL v2.0+
  */
 
-defined( 'ABSPATH' ) or die(); // WordPress must exist.
+defined( 'ABSPATH' ) || die(); // WordPress must exist.
 
 $current_dir = trailingslashit( dirname( __FILE__ ) );
 
@@ -38,4 +38,4 @@ if ( ! class_exists( 'WPAZ_Plugin_Base\\V_2_6\\Abstract_Plugin' ) ) {
  */
 require_once $current_dir . 'app/class-plugin.php';
 
-SM\Pages_Navigator\Plugin::run(__FILE__);
+SM\Pages_Navigator\Plugin::run( __FILE__ );
